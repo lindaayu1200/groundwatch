@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROUNDWATCH · pre-launch ground radar</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#board">Skip to the board</a>
+
+<header class="topbar" id="topbar">
+  <h1 class="brand"><span class="brand-name">GROUNDWATCH</span> <span class="brand-sep">·</span> <span class="brand-tag">pre-launch ground radar</span></h1>
+  <div class="top-meta">
+    <span class="meta-item">snapshot <b id="as-of" data-kpi="generated_at_utc">—</b></span>
+    <span class="meta-item"><b id="traded-n" data-kpi="traded_n">129</b> traded fit</span>
+  </div>
+</header>
+
+<section class="kpis" id="kpis" aria-label="Key figures">
+  <div class="kpi">
+    <span class="kpi-label">Watchlist covered</span>
+    <span class="kpi-value"><b id="kpi-watchlist" data-kpi="watchlist_covered">—</b><small>/<span data-kpi="watchlist_total">40</span></small></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">Rows scored</span>
+    <span class="kpi-value"><b id="kpi-rows" data-kpi="rows">—</b></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">Walk-forward MAPE</span>
+    <span class="kpi-value"><b id="kpi-wf-mape" data-kpi="walkforward_mape">—</b></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">LOO MAPE</span>
+    <span class="kpi-value"><b id="kpi-loo-mape" data-kpi="loo_mape">—</b></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">RMSLE (log10)</span>
+    <span class="kpi-value"><b id="kpi-rmsle" data-kpi="rmsle">—</b></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">Traded kept / dropped</span>
+    <span class="kpi-value"><b id="kpi-clean" data-kpi="n_clean">—</b><small>/<span data-kpi="n_dropped">—</span></small></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">Value range</span>
+    <span class="kpi-value range"><b id="kpi-range"><span data-kpi="min_value">—</span>–<span data-kpi="max_value">—</span></b></span>
+  </div>
+  <div class="kpi">
+    <span class="kpi-label">Distinct values</span>
+    <span class="kpi-value"><b id="kpi-distinct" data-kpi="distinct_values">—</b></span>
+  </div>
+</section>
+
+<main class="shell">
+  <div class="toolbar" role="search" aria-label="Board filters">
+    <label class="field search-field" for="search">
+      <span class="field-label">Text search</span>
+      <input id="search" type="search" placeholder="name, slug, chain…" autocomplete="off">
+    </label>
+    <label class="field" for="filter-category">
+      <span class="field-label">Category</span>
+      <select id="filter-category"><option value="all">all categories</option></select>
+    </label>
+    <label class="field" for="filter-chain">
+      <span class="field-label">Chain</span>
+      <select id="filter-chain"><option value="all">all chains</option></select>
+    </label>
+    <label class="field" for="filter-verdict">
+      <span class="field-label">Verdict</span>
+      <select id="filter-verdict">
+        <option value="all">all verdicts</option>
+        <option value="FARM">FARM</option>
+        <option value="WATCH">WATCH</option>
+        <option value="SKIP">SKIP</option>
+      </select>
+    </label>
+    <label class="check" for="watchlist-only">
+      <input id="watchlist-only" type="checkbox">
+      <span>watchlist only</span>
+    </label>
+    <label class="field" for="sort-by">
+      <span class="field-label">Sort by</span>
+      <select id="sort-by">
+        <option value="rank">rank</option>
+        <option value="implied">implied value</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7d growth</option>
+        <option value="age">age</option>
+        <option value="odds">token odds</option>
+        <option value="yield">yield per day</option>
+      </select>
+    </label>
+    <button class="dir" id="sort-dir" type="button" data-dir="desc" aria-label="Sort direction: descending, activate to reverse">↓ desc</button>
+    <span class="count" id="row-count" aria-live="polite">— rows</span>
+  </div>
+
+  <div class="board-wrap" tabindex="-1">
+    <table id="board">
+      <caption class="sr-only">Protocols ranked by implied value. Select a row for its model breakdown and farm plan.</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="num">Rank</th>
+          <th scope="col">Protocol</th>
+          <th scope="col">Category</th>
+          <th scope="col">Chains</th>
+          <th scope="col" class="num">TVL</th>
+          <th scope="col" class="num">7d</th>
+          <th scope="col" class="num">Age</th>
+          <th scope="col" class="num">Odds</th>
+          <th scope="col" class="num">Implied value</th>
+          <th scope="col">Verdict</th>
+          <th scope="col" class="num">Yield/day</th>
+        </tr>
+      </thead>
+      <tbody id="board-body">
+        <tr class="loading"><td colspan="11">Reading the ground field…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<aside class="detail" id="detail" aria-labelledby="detail-title" aria-hidden="true" hidden>
+  <div class="detail-inner">
+    <header class="detail-head">
+      <div>
+        <span class="kicker" id="detail-rank">Rank —</span>
+        <h2 id="detail-title">—</h2>
+        <p class="slug" id="detail-slug">—</p>
+      </div>
+      <button class="close" id="detail-close" type="button" aria-label="Close detail">Close</button>
+    </header>
+
+    <div class="badges">
+      <span class="badge on-watchlist" id="detail-watchlist">on watchlist</span>
+      <span class="badge watch" id="detail-verdict">WATCH</span>
+    </div>
+
+    <section class="detail-section">
+      <h3>Model breakdown</h3>
+      <table class="factor-table">
+        <tbody>
+          <tr data-factor="chains"><th scope="row">Chains</th><td id="factor-chains">—</td></tr>
+          <tr data-factor="tvl"><th scope="row">TVL</th><td class="num" id="factor-tvl">—</td></tr>
+          <tr data-factor="growth"><th scope="row">7d growth factor</th><td class="num" id="factor-growth">—</td></tr>
+          <tr data-factor="age"><th scope="row">Age factor</th><td class="num" id="factor-age">—</td></tr>
+          <tr data-factor="odds"><th scope="row">Token odds</th><td class="num" id="factor-odds">—</td></tr>
+          <tr data-factor="implied"><th scope="row">Implied value</th><td class="num" id="factor-implied">—</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="detail-section">
+      <h3>Farm plan</h3>
+      <table class="plan-table">
+        <thead><tr><th scope="col">Step</th><th scope="col">Cost</th><th scope="col">Duration</th></tr></thead>
+        <tbody id="detail-plan"></tbody>
+      </table>
+    </section>
+
+    <p class="verdict-line" id="detail-yield">Yield versus cost —</p>
+    <p class="audit-line" id="detail-audit">mape_walkforward — · mape_loo —</p>
+    <p class="audit-line" id="detail-rmsle">rmsle — · cleaned — · dropped —</p>
+  </div>
+</aside>
+
+<footer class="methodology">
+  <div class="method">
+    <h2>Methodology</h2>
+    <p><b>fitLaunchValue</b> — ridge log10 fit on <span data-kpi="traded_n">93</span> cleaned traded protocols (<span data-kpi="n_clean">93</span> kept, <span data-kpi="n_dropped">51</span> thrown out: bad caps, extreme mcap/tvl and one MAD residual pass): log10(mcap) from log10(tvl), clamped 7d growth and log10(age). Every board value comes from that one fit, multiplied by category token odds and capped at $2T.</p>
+    <p><b>walkForward</b> validation — fit on the earlier three quarters, score the held-out quarter: median APE <span data-kpi="walkforward_mape">—</span>. <b>leaveOneOut</b> validation — refit without each sampled protocol: median APE <span data-kpi="loo_mape">—</span>, RMSLE <span data-kpi="rmsle">—</span> log10 units. All three measured errors travel on every row.</p>
+  </div>
+  <p class="integrity">40/40 watchlist rows · ranks 1..N strictly by implied value · two runs byte-identical</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
